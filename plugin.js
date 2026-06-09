@@ -1,25 +1,4 @@
 (function() {
-    function regenerateMessage() {
-    
-        if (window.SillyTavern && window.SillyTavern.getContext) {
-            const context = SillyTavern.getContext();
-            if (context && typeof context.regenerateLastMessage === 'function') {
-                context.regenerateLastMessage();
-                console.log('分支功能正');
-                return;
-            }
-        }
-        
-    
-        const btn = document.getElementById('option_regenerate');
-        if (btn) {
-            btn.click();
-            console.log('⚠️ 通过模拟点击重新生成');
-        } else {
-            console.error('找不到重新生成按钮');
-        }
-    }
-
     function addGif() {
         if (document.getElementById('my-roll-gif')) return;
         
@@ -35,7 +14,16 @@
         gif.style.cursor = 'pointer';
         gif.style.zIndex = '999999';
         
-        gif.onclick = regenerateMessage;
+        gif.onclick = () => {
+            const context = window.SillyTavern?.getContext?.();
+            if (context && typeof context.regenerateLastMessage === 'function') {
+                context.regenerateLastMessage();
+                console.log('API触发生成');
+            } else {
+                const btn = document.getElementById('option_regenerate');
+                if (btn) btn.click();
+            }
+        };
         
         document.body.appendChild(gif);
         console.log('右下角动图已添加，CDN路径:', gif.src);
