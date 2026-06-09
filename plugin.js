@@ -1,28 +1,21 @@
 (function() {
-    function regenerateLastMessage() {
-        // 方法1：尝试官方 API（如果有）
-        const ctx = window.SillyTavern?.getContext?.();
-        if (ctx && typeof ctx.regenerateLastMessage === 'function') {
-            ctx.regenerateLastMessage();
-            console.log('✅ 通过 API 重新生成');
-            return;
-        }
-        
-        // 方法2：模拟点击官方重新生成按钮
-        const btn = document.getElementById('option_regenerate');
-        if (btn) {
-            btn.click();
-            console.log('✅ 通过按钮重新生成');
-            // 强制刷新分支选择器
-            setTimeout(() => {
-                const branchBtn = document.querySelector('.swipe_selector, .branch_selector, [class*="swipe"]');
-                if (branchBtn) branchBtn.click();
-            }, 100);
+    // 1. 使用官方标准指令来触发重新生成（这个指令100%会创建分支）
+    function regenerateWithBranch() {
+        // /regen 是酒馆内置的、最可靠的重新生成命令
+        const command = '/regen';
+        const textarea = document.querySelector('#send_textarea');
+        if (textarea) {
+            textarea.value = command;
+            textarea.dispatchEvent(new Event('input', { bubbles: true }));
+            const sendBtn = document.querySelector('#send_but, #send_button');
+            if (sendBtn) sendBtn.click();
+            console.log('✅ 已通过官方指令重新生成');
         } else {
-            console.error('❌ 找不到重新生成按钮');
+            console.error('❌ 找不到输入框');
         }
     }
 
+    // 2. 添加右下角图片（这部分你不用改）
     function addGif() {
         if (document.getElementById('my-roll-gif')) return;
         
@@ -38,10 +31,11 @@
         gif.style.cursor = 'pointer';
         gif.style.zIndex = '999999';
         
-        gif.onclick = regenerateLastMessage;
+        // 3. 关键: 把点击图片的动作绑定到上面的新函数
+        gif.onclick = regenerateWithBranch;
         
         document.body.appendChild(gif);
-        console.log('右下角动图已添加');
+        console.log('🎉 插件已加载完毕');
     }
     
     if (document.readyState === 'loading') {
