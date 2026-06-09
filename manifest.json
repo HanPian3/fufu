@@ -1,0 +1,11 @@
+{ 
+    "display_name": "测试主题",
+    "version": "1.0.0",
+    "author": "芙芙",
+    "description": "测试美化主题",
+    "load": true,
+    "js": "plugin.js",
+    "css": "fufu.css",
+    "loading_order": 0
+}
+
