@@ -1,4 +1,28 @@
 (function() {
+    function regenerateLastMessage() {
+        // 方法1：尝试官方 API（如果有）
+        const ctx = window.SillyTavern?.getContext?.();
+        if (ctx && typeof ctx.regenerateLastMessage === 'function') {
+            ctx.regenerateLastMessage();
+            console.log('✅ 通过 API 重新生成');
+            return;
+        }
+        
+        // 方法2：模拟点击官方重新生成按钮
+        const btn = document.getElementById('option_regenerate');
+        if (btn) {
+            btn.click();
+            console.log('✅ 通过按钮重新生成');
+            // 强制刷新分支选择器
+            setTimeout(() => {
+                const branchBtn = document.querySelector('.swipe_selector, .branch_selector, [class*="swipe"]');
+                if (branchBtn) branchBtn.click();
+            }, 100);
+        } else {
+            console.error('❌ 找不到重新生成按钮');
+        }
+    }
+
     function addGif() {
         if (document.getElementById('my-roll-gif')) return;
         
@@ -14,21 +38,10 @@
         gif.style.cursor = 'pointer';
         gif.style.zIndex = '999999';
         
-        gif.onclick = () => {
-            const textarea = document.querySelector('#send_textarea');
-            if (textarea) {
-                textarea.value = '/regenerate';
-                textarea.dispatchEvent(new Event('input', { bubbles: true }));
-                const sendBtn = document.querySelector('#send_but, #send_button');
-                if (sendBtn) sendBtn.click();
-                console.log('已发送 /regenerate 命令');
-            } else {
-                console.error('找不到输入框');
-            }
-        };
+        gif.onclick = regenerateLastMessage;
         
         document.body.appendChild(gif);
-        console.log('右下角动图已添加，CDN路径:', gif.src);
+        console.log('右下角动图已添加');
     }
     
     if (document.readyState === 'loading') {
